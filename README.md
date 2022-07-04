@@ -3,7 +3,9 @@
 ## Dependancies:
 
 	sudo apt install xorg-dev
+	
 or on Fedora / Redhat:
+
 	sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel
 
 
