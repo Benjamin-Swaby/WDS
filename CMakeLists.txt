@@ -42,7 +42,15 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 enable_testing()
 
 # directory of glfw libary to build
-add_subdirectory(extern/glfw-3.3.7)
+# add_subdirectory(extern/glfw-3.3.7)
+
+
+FetchContent_Declare(
+	glfw
+	URL https://github.com/glfw/glfw/archive/refs/tags/3.3.7.zip
+)
+FetchContent_MakeAvailable(glfw)
+
 
 # main executable definition
 add_executable(WDS
