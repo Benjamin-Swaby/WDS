@@ -7,10 +7,10 @@
 - C/++ compiler
 
 ## Dependancies Linux:
-   libXcursor
-   libXi
-   libXinerama
-   libXrandr
+- libXcursor
+- libXi
+- libXinerama
+- libXrandr
    
 
 ## Building Linux:
