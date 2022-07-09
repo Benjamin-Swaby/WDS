@@ -20,11 +20,9 @@
 	make all
 	
 ## Building With Nix:
-   mkdir build
-   export NIXPKGS_ALLOW_UNFREE=1
-   nix-shell
-   cd build
-   cmake ..
-   make all
-
-## 
+   	mkdir build
+   	export NIXPKGS_ALLOW_UNFREE=1
+   	nix-shel	
+   	cd build
+   	cmake ..
+   	make all 
