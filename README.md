@@ -1,18 +1,30 @@
 # Wave Diffraction Simulation
 
-## Dependancies:
+## Dependancies General:
+- Opengl
+- cuda toolkit
+- cmake
+- C/++ compiler
 
-	sudo apt install xorg-dev
-	
-or on Fedora / Redhat:
+## Dependancies Linux:
+   libXcursor
+   libXi
+   libXinerama
+   libXrandr
+   
 
-	sudo dnf install libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel
-
-
-
-## Building:
-
+## Building Linux:
 	mkdir build
 	cd build
 	cmake ..
 	make all
+	
+## Building With Nix:
+   mkdir build
+   export NIXPKGS_ALLOW_UNFREE=1
+   nix-shell
+   cd build
+   cmake ..
+   make all
+
+## 
