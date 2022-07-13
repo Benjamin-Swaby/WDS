@@ -22,7 +22,7 @@
 ## Building With Nix:
    	mkdir build
    	export NIXPKGS_ALLOW_UNFREE=1
-   	nix-shell	
+   	nix-shel	
    	cd build
    	cmake ..
    	make all 

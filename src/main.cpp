@@ -1,20 +1,67 @@
-// Include gtk
-#include <gtk/gtk.h>
 
-static void on_activate (GtkApplication *app) {
-  // Create a new window
-  GtkWidget *window = gtk_application_window_new (app);
-  // Create a new button
-  GtkWidget *button = gtk_button_new_with_label ("Hello, World!");
-  // When the button is clicked, close the window passed as an argument
-  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_window_close), window);
-  gtk_window_set_child (GTK_WINDOW (window), button);
-  gtk_window_present (GTK_WINDOW (window));
+#include <iostream>
+
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+
+#include <math.h>
+
+
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 }
 
-int main (int argc, char *argv[]) {
-  // Create a new application
-  GtkApplication *app = gtk_application_new ("com.example.GtkApplication", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (on_activate), NULL);
-  return g_application_run (G_APPLICATION (app), argc, argv);
+int main() {
+
+  printf("Compiled against GLFW %i.%i.%i\n",
+       GLFW_VERSION_MAJOR,
+       GLFW_VERSION_MINOR,
+       GLFW_VERSION_REVISION);
+
+  GLFWwindow* Win;
+
+
+  if (!glfwInit()) {
+    // TODO robust panic here
+    std::cout << "Failed to initialise" << std::endl;
+    return -1;
+  }
+
+  Win = glfwCreateWindow(640, 640, "WDS V0.1D",NULL,NULL);
+  
+  if (!Win) {
+    std::cout << "Failed to Create Window" << std::endl;
+    glfwTerminate();
+    return -1;
+  }
+
+  glfwMakeContextCurrent(Win);
+
+
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    std::cout << "Failed to initialise GLAD" << std::endl;
+  }
+
+  
+  // main render loop
+
+  while (!glfwWindowShouldClose(Win)) {
+    
+    int width, height;
+    glfwGetFramebufferSize(Win, &width, &height);
+    processInput(Win);
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    glfwPollEvents();
+    glfwSwapBuffers(Win);
+  }
+    
+  glfwTerminate();
+  return 0;
+  
+  
 }
