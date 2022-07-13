@@ -12,8 +12,6 @@ project(Wave-Diffraction-Simulation
           VERSION 1.0
           LANGUAGES C CXX CUDA)
 
-# Require OpenGL as a dependancy
-find_package(OpenGL REQUIRED)
 
 # Gtest dependancy
 include(FetchContent)
@@ -29,28 +27,15 @@ FetchContent_MakeAvailable(googletest)
 
 # set C++ standard
 set(CMAKE_CXX_STANDARD 20)
+# set flags
+SET(CMAKE_CXX_FLAGS  "-static-libgcc -static-libstdc++")
 
 # Output directory for the binary
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ../bin)
 
-# Don't build GLFW tests or DOCs or examples
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 # enable testing
 enable_testing()
-
-# directory of glfw libary to build
-# add_subdirectory(extern/glfw-3.3.7)
-
-
-FetchContent_Declare(
-	glfw
-	URL https://github.com/glfw/glfw/archive/refs/tags/3.3.7.zip
-)
-FetchContent_MakeAvailable(glfw)
-
 
 # main executable definition
 add_executable(WDS
@@ -63,16 +48,25 @@ add_executable(WDS_Test
   tests/main_test.cpp
   )
 
-# build the testing executable with gtest
-target_link_libraries(WDS_Test gtest_main glfw OpenGL::GL)
 
-# build the main executable with glfw and opengl
-target_link_libraries(WDS glfw)
-target_link_libraries(WDS OpenGL::GL)
+  # GTK stuff
+find_package(PkgConfig REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK4 REQUIRED gtk4)
+
+include_directories(${GTK4_INCLUDE_DIRS})
+link_directories(${GTK4_LIBRARY_DIRS})
+
+add_definitions(${GTK4_CFLAGS_OTHER})
+
+  
+# build the testing executable with gtest
+target_link_libraries(WDS_Test gtest_main)
+
+target_link_libraries(WDS ${GTK4_LIBRARIES})
 
 # include the google test library
 include(GoogleTest)
-# find all the tests in the test project
 gtest_discover_tests(WDS_Test)
 
 # include directory for the main executable
