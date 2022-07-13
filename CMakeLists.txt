@@ -29,7 +29,6 @@ FetchContent_MakeAvailable(googletest)
 set(CMAKE_CXX_STANDARD 20)
 # set flags
 SET(CMAKE_CXX_FLAGS  "-static-libgcc -static-libstdc++")
-
 # Output directory for the binary
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ../bin)
 
@@ -40,7 +39,6 @@ enable_testing()
 # main executable definition
 add_executable(WDS
   src/main.cpp
-  src/glad.c
   )
 
 # testing executable definition
@@ -51,19 +49,19 @@ add_executable(WDS_Test
 
   # GTK stuff
 find_package(PkgConfig REQUIRED)
-find_package(PkgConfig REQUIRED)
+
 pkg_check_modules(GTK4 REQUIRED gtk4)
 
 include_directories(${GTK4_INCLUDE_DIRS})
 link_directories(${GTK4_LIBRARY_DIRS})
 
 add_definitions(${GTK4_CFLAGS_OTHER})
-
+target_link_libraries(WDS ${GTK4_LIBRARIES})
   
 # build the testing executable with gtest
 target_link_libraries(WDS_Test gtest_main)
 
-target_link_libraries(WDS ${GTK4_LIBRARIES})
+
 
 # include the google test library
 include(GoogleTest)
