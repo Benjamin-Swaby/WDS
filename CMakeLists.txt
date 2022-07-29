@@ -2,7 +2,7 @@
 include(CheckLanguage)
 check_language(CUDA)
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
 # Use cuda C
 enable_language(CUDA)
@@ -14,6 +14,7 @@ project(Wave-Diffraction-Simulation
 
 # Require OpenGL as a dependancy
 find_package(OpenGL REQUIRED)
+
 
 # Gtest dependancy
 include(FetchContent)
@@ -51,6 +52,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+add_library(imgui STATIC
+  extern/imgui/imgui_demo.cpp
+  extern/imgui/imgui.cpp
+  extern/imgui/imgui_draw.cpp
+  extern/imgui/imgui_tables.cpp
+  extern/imgui/imgui_widgets.cpp
+  extern/imgui/backends/imgui_impl_glfw.cpp
+  extern/imgui/backends/imgui_impl_opengl3.cpp
+)
+target_include_directories(imgui PRIVATE
+  ${PROJECT_SOURCE_DIR}/extern/imgui
+  ${PROJECT_SOURCE_DIR}/extern/imgui/backends
+)
+target_link_libraries(imgui glfw OpenGL::GL)
 
 # main executable definition
 add_executable(WDS
@@ -68,7 +83,7 @@ target_link_libraries(WDS_Test gtest_main glfw OpenGL::GL)
 
 # build the main executable with glfw and opengl
 target_link_libraries(WDS glfw)
-target_link_libraries(WDS OpenGL::GL)
+target_link_libraries(WDS OpenGL::GL imgui)
 
 # include the google test library
 include(GoogleTest)
@@ -78,4 +93,7 @@ gtest_discover_tests(WDS_Test)
 # include directory for the main executable
 target_include_directories(WDS
         PRIVATE
-        ${PROJECT_SOURCE_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/extern/imgui
+	${PROJECT_SOURCE_DIR}/extern/imgui/backends
+)
