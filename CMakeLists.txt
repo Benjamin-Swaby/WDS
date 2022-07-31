@@ -78,6 +78,7 @@ target_link_libraries(imgui glfw OpenGL::GL)
 
 # main executable definition
 add_executable(WDS
+  lib/errors.cpp
   src/main.cpp
   src/glad.c
   )
