@@ -45,12 +45,6 @@ void RenderColours(float &r, float &g, float &b, bool &show) {
 }
 
 
-void TranslateMenu(bool &show, float &offset) {
-  ImGui::Begin("Translate", &show);
-  ImGui::SliderFloat("Amount", &offset, -0.02f, 0.02f);
-  ImGui::End();
-}
-
 void RenderMainMenu(float &wavelength, float &frequency, bool &debug, bool &play, int &slits, bool &bg_colour) {
 
   ImGui::Begin("WDS");
@@ -214,14 +208,26 @@ int main(void) {
     float b_green = 0.3f;
     float b_blue = 0.3f;
     
-    bool debug, play, bg_colour_change, translate = false;
-    float offset = 0.0f;
+    bool debug = false;
+    bool play = false;
+    bool bg_colour_change = false;
+    bool translate = false;
+
+    float offset = 0.01f;
 
     float vertices[] = {
-	  -0.5f, -0.5f, 0.0f, // left  
-	  0.5f, -0.5f, 0.0f, // right 
-	  0.0f,  0.5f, 0.0f  // top   
+	  -1.2f, -0.8f, 0.0f, // left  
+	  -1.175f, -0.8f, 0.0f, // right 
+	  -1.175f,  0.8f, 0.0f,  // top
+	  -1.2f,  0.8f, 0.0f
     };
+
+    unsigned int indices[] = {  // note that we start from 0!
+      0, 1, 3,   // first triangle
+      1, 2, 3    // second triangle
+    };
+
+    int time = 0;
     
     // main render loop
     while (!glfwWindowShouldClose(Win)) {
@@ -239,15 +245,20 @@ int main(void) {
 	
 
 	// bind to a VBO
-	unsigned int VBO, VAO;
+	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	
     
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+       	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
     
@@ -255,17 +266,15 @@ int main(void) {
     
 	glBindVertexArray(0); 
 
-
+	//TODO not cleaning the buffer causes a memory leak ~1MiB per second.
+	
 	// menu rendering
 	RenderMainMenu(wavelength,frequency,debug,play,slits,bg_colour_change);
-	TranslateMenu(translate,offset);
 
-	for (int i = 0; i < 8; i+=3) {
-	  vertices[i] += offset;
-	}
 	
 	if (debug) {
 	  RenderDebugMenu(debug);
+	  std::cout << "Time : " << time << "\n";  
 	}
 
 	if (bg_colour_change) {
@@ -282,11 +291,29 @@ int main(void) {
         ImGui::Render();
 	glUseProgram(shaderProgram);
         glBindVertexArray(VAO); 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
       
         glfwPollEvents();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(Win);
+
+	if (play) {
+	  time++;
+
+	  for (int i = 0; i < 11; i+=3) {
+	    vertices[i]+=offset;
+	  }
+
+	  if (time > 230) {
+
+	    for (int i = 0; i < 11; i+=3) {
+	      vertices[i] -= (offset * time);
+	    }  
+	    
+	    time = 0;
+	  }
+	  
+       }
     }
     
     glfwTerminate();
