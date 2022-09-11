@@ -19,18 +19,19 @@ namespace WDS {
     void Ignore();
 
   public:
-    void Log();
-    void ToStdOut();
+    Error Log();
+    Error ToStdOut();
 
     Error(std::string message, int code, bool panic) {
       this->ErrorCode = code;
       this->Message = message;
 
       if (panic) {
-	this->ToStdOut();
-	this->Log();
-	this->Panic();
+        this->ToStdOut();
+        this->Log();
+        this->Panic();
       }
+      
     }
 
   

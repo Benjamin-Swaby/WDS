@@ -2,7 +2,7 @@
 // created : 31.07.22
 // contains: Implimentation of functions defined in /include/errors.hpp
 
-#include "../include/errors.hpp"
+#include "errors.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -13,7 +13,7 @@ using namespace WDS;
 
 
 // interact with a logger to write to a log file.
-void Error::Log() {
+WDS::Error Error::Log() {
   // open log file
   ofstream LogFileStream;
   LogFileStream.open("log.txt",std::ios::ios_base::app);
@@ -27,11 +27,14 @@ void Error::Log() {
   LogFileStream << this->ErrorCode << " : " <<this->Message << endl;
   LogFileStream.flush();
   LogFileStream.close();
+
+  return *this;
 }
 
 // Print the error message to the terminal.
-void Error::ToStdOut() {
+WDS::Error Error::ToStdOut() {
   std::cout << this->ErrorCode << " : " << this->Message << std::endl;
+  return *this;
 }
 
 

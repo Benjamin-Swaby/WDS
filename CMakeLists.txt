@@ -61,6 +61,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+# Build imgui
 add_library(imgui STATIC
   extern/imgui/imgui_demo.cpp
   extern/imgui/imgui.cpp
@@ -76,11 +77,28 @@ target_include_directories(imgui PRIVATE
 )
 target_link_libraries(imgui glfw OpenGL::GL)
 
+
+# Build Aventra Library
+add_library(Aventra STATIC
+  lib/AventraRenderEngine/lib.cpp
+  lib/AventraRenderEngine/menus.cpp
+  lib/AventraRenderEngine/Aventra_rect.cpp
+  lib/AventraRenderEngine/glad.c
+)
+target_include_directories(Aventra PRIVATE
+  ${PROJECT_SOURCE_DIR}/lib/AventraRenderEngine/include
+  ${PROJECT_SOURCE_DIR}/lib/AventraRenderEngine/include/glad
+  ${PROJECT_SOURCE_DIR}/extern/imgui
+  ${PROJECT_SOURCE_DIR}/extern/imgui/backends
+)
+
+target_link_libraries(Aventra glfw OpenGL::GL imgui)
+
+
 # main executable definition
 add_executable(WDS
   lib/errors.cpp
   src/main.cpp
-  src/glad.c
   )
 
 # testing executable definition
@@ -93,7 +111,7 @@ target_link_libraries(WDS_Test gtest_main glfw OpenGL::GL)
 
 # build the main executable with glfw and opengl
 target_link_libraries(WDS glfw)
-target_link_libraries(WDS OpenGL::GL imgui)
+target_link_libraries(WDS OpenGL::GL imgui Aventra)
 
 # include the google test library
 include(GoogleTest)
@@ -104,6 +122,7 @@ gtest_discover_tests(WDS_Test)
 target_include_directories(WDS
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/extern/imgui
-	${PROJECT_SOURCE_DIR}/extern/imgui/backends
+        #${PROJECT_SOURCE_DIR}/extern/imgui
+	    #${PROJECT_SOURCE_DIR}/extern/imgui/backends
+        ${PROJECT_SOURCE_DIR}/lib/AventraRenderEngine/include
 )
