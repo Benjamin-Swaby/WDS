@@ -2,12 +2,15 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <vector>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include "./glad/glad.h"
 
 #include "Aventra_rect.hpp"
+
+using std::vector;
 
 namespace Aventra {
 
@@ -33,6 +36,10 @@ namespace Aventra {
     float Frequency;
     int Slits;
     bool play;
+
+    vector<Rect*> RectQueue;
+    //vector<Arc> ArcQueue;
+    vector<Rect> SlitQueue;
     
     Window(int x, int y, char *title);
     void update(void (*update)(float));

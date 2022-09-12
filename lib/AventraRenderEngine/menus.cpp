@@ -42,8 +42,8 @@ void Window::renderColours(bool &show) {
 void Window::renderMainMenu() {
   ImGui::Begin("WDS");
   
-  ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.0f, 100.0f); 
-  ImGui::SliderFloat("Frequency", &this->Frequency, 0.0f, 100.0f);
+  ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.0f, 1.0f); 
+  ImGui::SliderFloat("Frequency", &this->Frequency, 0.0f, 1.0f);
   ImGui::SliderInt("Slits", &this->Slits, 0, 100);
  
  

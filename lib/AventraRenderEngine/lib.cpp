@@ -1,5 +1,6 @@
 #include "Aventra.hpp"
-#include <stdio.h>
+#include "Aventra_rect.hpp"
+#include <iostream>
 
 #include "../../include/errors.hpp"
 #include "imgui.h"
@@ -75,6 +76,8 @@ void Window::update(void (*update)(float)) {
   glClear(GL_COLOR_BUFFER_BIT);
   
   (*update)(delta);
+
+  
   
 
   ImGui_ImplOpenGL3_NewFrame();
@@ -83,18 +86,34 @@ void Window::update(void (*update)(float)) {
   
   if (this->debug) {this->renderDebugMenu(this->debug);}
   if (this->changeBGcolour) {this->renderColours(this->changeBGcolour);}
-
+  
 
   renderMainMenu();  
   ImGui::Render();
-  
-  
-      
-  glfwPollEvents();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+  // define a master wave.
+  Rect *prev = this->RectQueue.back();
+  // move the master wave
+  prev->Translate((this->Wavelength * this->Frequency), 0.0f);
+
+  // check bounds of master wave
+  if (prev->x > 0.0f) {prev->x = this->RectQueue.front()->x - this->Wavelength;}
+
+  // move the slave waves behind a set distance
+  for (int index = this->RectQueue.size() - 2; index >= 0; index--) {
+    this->RectQueue[index]->SetPos((prev->x) - (index*(this->Wavelength)), this->RectQueue[index]->y);
+  }
+
+  // Draw all wavefronts
+  for (auto r : this->RectQueue) {
+    r->Draw();
+  }
   
   glfwSwapBuffers(this->window);
+  glfwPollEvents();
+  
+
    
   now = glfwGetTime();
   delta = (float)(now - last) * 10.0f;
