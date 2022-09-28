@@ -9,6 +9,7 @@
 #include "./glad/glad.h"
 
 #include "Aventra_rect.hpp"
+#include "Aventra_arc.hpp"
 
 using std::vector;
 
@@ -40,6 +41,7 @@ namespace Aventra {
     vector<Rect*> RectQueue;
     //vector<Arc> ArcQueue;
     vector<Rect> SlitQueue;
+    vector<Arc*> ArcQueue; 
     
     Window(int x, int y, char *title);
     void update(void (*update)(float));

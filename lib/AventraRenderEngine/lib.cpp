@@ -1,5 +1,6 @@
 #include "Aventra.hpp"
 #include "Aventra_rect.hpp"
+#include "Aventra_arc.hpp"
 #include <iostream>
 
 #include "../../include/errors.hpp"
@@ -89,8 +90,7 @@ void Window::update(void (*update)(float)) {
   
 
   renderMainMenu();  
-  ImGui::Render();
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  
 
   // define a master wave.
   Rect *prev = this->RectQueue.back();
@@ -98,7 +98,7 @@ void Window::update(void (*update)(float)) {
   prev->Translate((this->Wavelength * this->Frequency), 0.0f);
 
   // check bounds of master wave
-  if (prev->x > 0.0f) {prev->x = this->RectQueue.front()->x - this->Wavelength;}
+  if (prev->x > -0.03f) {prev->x = this->RectQueue.front()->x - this->Wavelength;}
 
   // move the slave waves behind a set distance
   for (int index = this->RectQueue.size() - 2; index >= 0; index--) {
@@ -109,6 +109,21 @@ void Window::update(void (*update)(float)) {
   for (auto r : this->RectQueue) {
     r->Draw();
   }
+
+
+  for (auto a : this->ArcQueue) {
+    a->Draw(90);
+    a->Scale(this->Wavelength * this->Frequency);
+    if (a->getR() > 2.0f) {
+      a->setR(0.0);
+    }
+    
+    //std::cout << a->getR() << "\n";
+  }
+
+
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   
   glfwSwapBuffers(this->window);
   glfwPollEvents();
