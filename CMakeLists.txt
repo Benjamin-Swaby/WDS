@@ -1,11 +1,8 @@
 # to check and find a Cuda compiler
-include(CheckLanguage)
-check_language(CUDA)
 
 cmake_minimum_required(VERSION 3.20)
 
-# Use cuda C
-enable_language(CUDA)
+
 
 IF (WIN32)
   set(GCC_COVERAGE_COMPILE_FLAGS "/MT")
@@ -19,7 +16,7 @@ ENDIF()
 # Project Definition
 project(Wave-Diffraction-Simulation
           VERSION 1.0
-          LANGUAGES C CXX CUDA)
+          LANGUAGES C CXX)
 
 # Require OpenGL as a dependancy
 find_package(OpenGL REQUIRED)
