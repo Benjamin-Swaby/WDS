@@ -25,4 +25,9 @@
    	nix-shell	
    	cd build
    	cmake ..
-   	make all 
+   	make all
+
+## Building Windows:
+    Install about 20GB of visual studio stuff,
+    Install Cmake,
+    Build with Cmake.

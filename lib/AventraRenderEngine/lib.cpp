@@ -111,16 +111,19 @@ void Window::update(void (*update)(float)) {
   }
 
 
-  for (auto a : this->ArcQueue) {
-    a->Draw(90);
-    a->Scale(this->Wavelength * this->Frequency);
-    if (a->getR() > 2.0f) {
-      a->setR(0.0);
-    }
-    
-    //std::cout << a->getR() << "\n";
-  }
+  Arc *master = this->ArcQueue.back();
+  Arc *tail = this->ArcQueue.front();
+  master->Scale(this->Wavelength * this->Frequency);
+  if (master->getR() > 2.0f) {master->setR(tail->getR() - this->Wavelength);}
 
+  for (int index = this->ArcQueue.size() - 2; index >=0; index--) {
+    this->ArcQueue[index]->setR(master->getR() - (index  * this->Wavelength));
+  }
+  
+  for (auto a : this->ArcQueue) {
+    if (a->getR() >= 0.0f) {a->Draw(90);}
+  }
+  
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
