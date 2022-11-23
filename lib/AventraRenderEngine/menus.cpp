@@ -42,9 +42,22 @@ void Window::renderColours(bool &show) {
 void Window::renderMainMenu() {
   ImGui::Begin("WDS");
   
-  ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.0f, 1.0f); 
-  ImGui::SliderFloat("Frequency", &this->Frequency, 0.0f, 1.0f);
-  ImGui::SliderInt("Slits", &this->Slits, 0, 100);
+  ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.0f, 0.5f); 
+  ImGui::SliderFloat("Frequency", &this->Frequency, 0.0f, 0.5f);
+  ImGui::SliderInt("Slits", &this->Slits, 1, 40);
+
+  // calculate max slit width and reset bounds automatically
+  float maxSlitWidth;
+  if (this->Slits > 0.0f){
+
+    maxSlitWidth = this->y / this->Slits;
+
+  } else{maxSlitWidth = 0.0f;}
+
+  
+  if (this->slitWidth >= maxSlitWidth) {this->slitWidth = maxSlitWidth;}
+  
+  ImGui::SliderFloat("Slit Width", &this->slitWidth, 0.0f, maxSlitWidth / this->y);
  
  
   if (ImGui::Button("Play/Pause")) {

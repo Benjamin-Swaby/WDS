@@ -13,26 +13,16 @@ using namespace Aventra;
 
 static double simTime = -0.99;
 const double scale = 0.03;
-const int number = 200;
-
-
-void Step(float delta) {
-
-}
-
+const int number = 400;
 
 int main(void) {
   auto win = new Window(2000,2000, "WDS V0.1D");
 
-
-  // generate n rectangles based on ^
   for (int i = 0; i < number; i++) {
     auto r = new Rect(simTime + (i * scale), -0.90f, 0.005f, 1.80f);
     win->RectQueue.push_back(r);
   }
 
-
-  
   auto a = new Arc(0.0 + 0, 0.0, 0);
   
   unsigned int sP = a->getShaderProgram();
@@ -41,11 +31,11 @@ int main(void) {
     auto a = new Arc(0.0 + (i * 0.1), 0.0, 0, sP);
     win->ArcQueue.push_back(a);
   }
-  
+
   
   // main render loop
   while (!win->shouldClose() && !win->err) {
-    win->update(Step);
+    win->update();
   }
   
 }

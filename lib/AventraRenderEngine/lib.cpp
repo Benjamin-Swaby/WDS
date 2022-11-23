@@ -13,7 +13,7 @@ using namespace Aventra;
 
 
 Window::Window(int x, int y, char *title) {
-
+  
 #if defined(IMGUI_IMPL_OPENGL_ES2)
       const char* glsl_version = "#version 100";
       glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
@@ -32,9 +32,15 @@ Window::Window(int x, int y, char *title) {
 #endif
       
 
+      // initialisation of class attributes:
+      this->Wavelength = 0.0f;
+      this->Frequency = 0.0f;
+      this->Slits = 1.0f;
+      
       this->x = x;
       this->y = y;
-      
+
+      // initialse GLFW
       if (!glfwInit()) {
         WDS::Error("Failed to Init GLFW", -12, true);
         this->err = 1;
@@ -44,6 +50,7 @@ Window::Window(int x, int y, char *title) {
       glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
       this->window = glfwCreateWindow(x,y, title, NULL, NULL);
 
+      // Create a window
       if (!this->window) {
         glfwTerminate();
         WDS::Error("Failed to Create Window", -12, true);
@@ -54,8 +61,8 @@ Window::Window(int x, int y, char *title) {
       glfwSwapInterval(1); // enable Vsync
 
       if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-      // Chosen not to panic here as the program still may run. 
-           WDS::Error("Failed to load GLAD configuration", 14, false); 
+      // ~~Chosen not to panic here as the program still may run.~~ //Unlikely! 
+           WDS::Error("Failed to load GLAD configuration", 14, true); 
        }
 
       // -- IMGUI Attachment -- //
@@ -69,18 +76,13 @@ Window::Window(int x, int y, char *title) {
 
 
 
-void Window::update(void (*update)(float)) {
+void Window::update() {
   last = glfwGetTime();
 
   glViewport(0, 0, this->x, this->y);
   glClearColor(this->bgR, this->bgG, this->bgB, 1);
   glClear(GL_COLOR_BUFFER_BIT);
-  
-  (*update)(delta);
-
-  
-  
-
+   
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -100,7 +102,7 @@ void Window::update(void (*update)(float)) {
   // check bounds of master wave
   if (prev->x > -0.03f) {prev->x = this->RectQueue.front()->x - this->Wavelength;}
 
-  // move the slave waves behind a set distance
+  // move the secondary waves behind a set distance
   for (int index = this->RectQueue.size() - 2; index >= 0; index--) {
     this->RectQueue[index]->SetPos((prev->x) - (index*(this->Wavelength)), this->RectQueue[index]->y);
   }
@@ -110,21 +112,57 @@ void Window::update(void (*update)(float)) {
     r->Draw();
   }
 
-
   Arc *master = this->ArcQueue.back();
   Arc *tail = this->ArcQueue.front();
-  master->Scale(this->Wavelength * this->Frequency);
-  if (master->getR() > 2.0f) {master->setR(tail->getR() - this->Wavelength);}
 
-  for (int index = this->ArcQueue.size() - 2; index >=0; index--) {
-    this->ArcQueue[index]->setR(master->getR() - (index  * this->Wavelength));
-  }
   
-  for (auto a : this->ArcQueue) {
-    if (a->getR() >= 0.0f) {a->Draw(90);}
-  }
-  
+  float flatness = (this->Wavelength < this->slitWidth) ? (this->Wavelength / this->slitWidth) : 1.0f;
+    
+  master->Scale((this->Wavelength * this->Frequency));
+  if (master->getR() > 3.0f) {master->setR(tail->getR() - this->Wavelength);}
 
+  float home = master->getR();
+  for (int index = this->ArcQueue.size() - 2; index >=0; index--) {    
+    this->ArcQueue[index]->setR((home - (index  * this->Wavelength))); // change in radius change by some ratio
+  }
+
+
+  float offset = 0.0f;
+  float start = 1.0f;
+  for (int i = 1; i < this->Slits + 1; i++) {
+
+    // for an even number of slits
+    if (this->Slits % 2 == 0) {
+      if (i & 1) {
+        offset = -1 * offset - (1.5f / (this->Slits));
+      } else {
+        offset = -1 * offset;
+      }
+    } else {
+      
+      if (i & 1) {
+        offset = -1 * offset - (1.5f / (this->Slits + 1));
+
+        if (i == this->Slits) {
+          offset = 0.0f;
+        }
+      } else {
+        offset = -1 * offset;
+        
+      }   
+    }
+     
+    
+    for (auto a : this->ArcQueue) {
+      if (a->getR() >= 0.0f) {
+        a->SetColour(offset, 0.5, 0.0);
+        a->Draw(180, this->slitWidth, this->Wavelength, offset);
+      }  
+    }
+
+  }
+
+  
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   
@@ -140,6 +178,5 @@ void Window::update(void (*update)(float)) {
 int Window::shouldClose() {
   return glfwWindowShouldClose(this->window);
 }
-
 
 

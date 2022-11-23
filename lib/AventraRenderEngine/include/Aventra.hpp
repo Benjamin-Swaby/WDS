@@ -33,18 +33,19 @@ namespace Aventra {
     int err = 0;
     double time = 0.0f;
     float bgR = 0.25, bgG = 0.3, bgB = 0.3;
+
     float Wavelength;
     float Frequency;
     int Slits;
     bool play;
+    float slitWidth;
 
     vector<Rect*> RectQueue;
-    //vector<Arc> ArcQueue;
     vector<Rect> SlitQueue;
     vector<Arc*> ArcQueue; 
     
     Window(int x, int y, char *title);
-    void update(void (*update)(float));
+    void update();
     int shouldClose();
   
 
@@ -52,10 +53,6 @@ namespace Aventra {
     void renderColours(bool &show);
     void renderMainMenu();
 
-    GLFWwindow* getWindow() {
-      //return this->window;
-    }
-                            
     
     ~Window() {
       glfwDestroyWindow(window);

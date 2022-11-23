@@ -72,24 +72,49 @@ inline unsigned int compileShaders() {
 
 #define pi 3.141592653589793
 
-void Arc::Draw(int N) {
+void Arc::Draw(int N, float slitWidth, float wavelength, float vertOffset) {
 
   
   glUseProgram(this->shaderProgram);
   
-  glBindVertexArray(this->VAO);
-  glDrawArrays(GL_LINES, 0, 360);
-  glBindVertexArray(0);
-  glLineWidth(4);
+  //glBindVertexArray(this->VAO);
+  //glDrawArrays(GL_LINES, 0, 360);
+  //glBindVertexArray(0);
+  glLineWidth(5);
+
 
   
   glBegin(GL_LINES);
+  glUseProgram(0);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
   
-    for (int i = 0; i < N; i++) {
-      glVertex2f(this->cx + this->r * sin(pi/N * i), this->cy + this->r * cos(pi/N * i));  
-    }
+  glColor3f(this->red, this->green, this->blue);
+  const float halfPiByN = 0.5 * pi/N;
+  const float quaterTurn = pi/2;
+  float flatness = (wavelength < slitWidth) ? (wavelength / slitWidth) : 1.0f;
+  float x,y;
+  
+  for (int i = 0; i < N; i++) {
+    y = this->cy + this->r * cos((halfPiByN * i) + quaterTurn);
+    x = this->cx + this->r * sin((halfPiByN * i * flatness) + quaterTurn) * flatness;
+    glVertex2f(x,y+vertOffset);
+  }   
   glEnd();
 
+  glBegin(GL_LINES);
+  glUseProgram(0);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(this->red, this->green, this->blue);
+  for (int i = 0; i < N; i++) {
+    y = this->cy + this->r * cos((halfPiByN * i) + quaterTurn);
+    x = this->cx + this->r * sin((halfPiByN * i * flatness) + quaterTurn) * flatness;
+    glVertex2f(x,-y+vertOffset);
+  }
+
+  glEnd();
+  
   glLineWidth(1);
   
 }
@@ -119,8 +144,12 @@ Arc::Arc(float r, float cx, float cy) {
     
 }
 
-
-
 void Arc::Scale(float x) {
   this->r += x;
+}
+
+void Arc::SetColour(float r, float g, float b) {
+  this->red = r;
+  this->green = g;
+  this->blue = b;
 }
