@@ -3,12 +3,16 @@
 cmake_minimum_required(VERSION 3.20)
 
 
+# enable with -Dtest=ON
+option(test "Build all tests." OFF)
+
 IF (WIN32)
   set(GCC_COVERAGE_COMPILE_FLAGS "/MT")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 ELSE()
-  set(GCC_COVERAGE_COMPILE_FLAGS "-static-libstdc++ -static-libgcc")
+  set(GCC_COVERAGE_COMPILE_FLAGS "-static-libstdc++ -static-libgcc  -O2")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+  set(CMAKE_C_FLAGS "-static-libgcc -O2")
 ENDIF()
 
 
@@ -35,9 +39,7 @@ add_subdirectory(lib/AventraRenderEngine)
 
 
 add_executable(WDS
-  lib/errors.cpp
   src/main.cpp
-  tests/main_test.cpp
 )
 
 target_include_directories(WDS
@@ -49,9 +51,26 @@ target_include_directories(WDS
 )
 
 
-target_link_libraries(WDS Aventra gtest_main)
+if (test)
 
-enable_testing()
-include(GoogleTest)
-# gtest_discover_tests(WDS)
+  add_executable(WDS_test
+    tests/main_test.cpp
+  )
 
+  target_include_directories(WDS_test
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        #${PROJECT_SOURCE_DIR}/extern/imgui
+	    #${PROJECT_SOURCE_DIR}/extern/imgui/backends
+        ${PROJECT_SOURCE_DIR}/lib/AventraRenderEngine/include        
+      )
+  
+  enable_testing()
+  include(GoogleTest)
+  gtest_discover_tests(WDS_test)
+
+  target_link_libraries(WDS_test Aventra gtest_main)
+  
+endif()
+
+target_link_libraries(WDS Aventra)

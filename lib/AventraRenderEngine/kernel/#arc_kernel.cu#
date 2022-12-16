@@ -1,10 +1,8 @@
-#include "./include/Aventra_arc.hpp"
-#include <cstdlib>
-#include <stdio.h>
+#include <../include/glad/glad.h>
+#include <cuda_gl_interop.h>
 #include <iostream>
+#include <../include/Aventra_arc.hpp>
 #define GL_GLEXT_PROTOTYPES
-#include "./glad/glad.h"
-#include <math.h>
 
 
 using namespace Aventra;
@@ -70,83 +68,31 @@ inline unsigned int compileShaders() {
 }
 
 
-#define pi 3.141592653589793
-void Arc::Draw(int N, float slitWidth, float wavelength, float vertOffset) {
 
-  
-  glUseProgram(this->shaderProgram);
-  
-  //glBindVertexArray(this->VAO);
-  //glDrawArrays(GL_LINES, 0, 360);
-  //glBindVertexArray(0);
-  glLineWidth(5);
-  glBegin(GL_LINES);
-  glUseProgram(this->shaderProgram);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_TEXTURE_2D);
-  glColor3f(this->red, this->green, this->blue);
+Arc::Arc(float r, float cx, float cy) {
 
-  
-  const float halfPiByN = 0.5 * pi/N;
-  const float quaterTurn = pi/2;
-  float flatness = (wavelength < slitWidth) ? (wavelength / slitWidth) : 1.0f;
-  float x,y;
-  
-  for (int i = 0; i < N; i++) {
-    y = this->cy + this->r * cos((halfPiByN * i) + quaterTurn);
-    x = this->cx + this->r * sin((halfPiByN * i * flatness) + quaterTurn) * flatness;
-    glVertex2f(x,y+vertOffset);
-  }   
-  glEnd();
-
-  glBegin(GL_LINES);
-  glUseProgram(0);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_TEXTURE_2D);
-  glColor3f(this->red, this->green, this->blue);
-  for (int i = 0; i < N; i++) {
-    y = this->cy + this->r * cos((halfPiByN * i) + quaterTurn);
-    x = this->cx + this->r * sin((halfPiByN * i * flatness) + quaterTurn) * flatness;
-    glVertex2f(x,-y+vertOffset);
-  }
-
-  glEnd();
-  
-  glLineWidth(1);
-  
-}
-
-
-Arc::Arc(float r, float cx, float cy, unsigned int shaderProgram) {
-  this->shaderProgram = shaderProgram;
+  this->shaderProgram = compileShaders();
   this->r = r;
   this->cx = cx;
   this->cy = cy;
+
+  // Allocate the VBO
+  glGenBuffers(1, &this->VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+  unsigned int size = 90 * 4 * sizeof(float); // 90, 4 floats
+  glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  cudaGraphicsResource_t VBO_Cuda;
   
-}
+  // register with CUDA
+  cudaGraphicsGLRegisterBuffer(&VBO_Cuda, this->VBO, cudaGraphicsMapFlagsWriteDiscard);
+  cudaGraphicsMapResources(1, &VBO_Cuda, 0);
+  size_t numBytes;
+  cudaGraphicsResourceGetMappedPointer((void **)&this->VBO, &numBytes, VBO_Cuda);
 
+  // execute the kernel:
 
-void Arc::Destroy() {
-  glDeleteBuffers(1, &this->VAO);
-  glDeleteBuffers(1, &this->VBO);
-  glDeleteBuffers(1, &this->EBO);
-  free(this);
-}
-
-Arc::Arc(float r, float cx, float cy) {
-  this->shaderProgram = compileShaders(); 
-  this->r = r;
-  this->cx = cx;
-  this->cy = cy;  
-}
-
-
-void Arc::Scale(float x) {
-  this->r += x;
-}
-
-void Arc::SetColour(float r, float g, float b) {
-  this->red = r;
-  this->green = g;
-  this->blue = b;
+  
+  
 }

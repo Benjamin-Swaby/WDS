@@ -62,7 +62,8 @@ Window::Window(int x, int y, char *title) {
 
       if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       // ~~Chosen not to panic here as the program still may run.~~ //Unlikely! 
-           WDS::Error("Failed to load GLAD configuration", 14, true); 
+           WDS::Error("Failed to load GLAD configuration", 14, true);
+           this->err = 1;
        }
 
       // -- IMGUI Attachment -- //
@@ -77,8 +78,7 @@ Window::Window(int x, int y, char *title) {
 
 
 void Window::update() {
-  last = glfwGetTime();
-
+ 
   glViewport(0, 0, this->x, this->y);
   glClearColor(this->bgR, this->bgG, this->bgB, 1);
   glClear(GL_COLOR_BUFFER_BIT);
@@ -169,10 +169,6 @@ void Window::update() {
   glfwSwapBuffers(this->window);
   glfwPollEvents();
   
-
-   
-  now = glfwGetTime();
-  delta = (float)(now - last) * 10.0f;
 }
 
 int Window::shouldClose() {

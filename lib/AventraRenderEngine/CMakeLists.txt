@@ -4,6 +4,19 @@ find_package(OpenGL REQUIRED)
 
 include(FetchContent)
 
+# enable with -Dcuda=ON
+option(test "Build all tests." OFF)
+option(cuda "Build With CUDA" OFF)
+
+
+if (cuda)
+  include(CheckLanguage)
+  check_language(CUDA)
+
+  enable_language(CUDA)
+
+endif()
+
 # Gtest
 FetchContent_Declare(
   googletest
@@ -50,14 +63,33 @@ target_link_libraries(imgui glfw OpenGL::GL)
 
 
 
+
+
 # Build Aventra Library
-add_library(Aventra STATIC
-  lib.cpp
-  menus.cpp
-  Aventra_arc.cpp
-  Aventra_rect.cpp
-  glad.c
-)
+
+if (cuda)
+  add_library(Aventra STATIC
+    lib.cpp
+    menus.cpp
+    Aventra_arc.cpp
+    Aventra_rect.cpp
+    glad.c
+    errors.cpp
+    kernel/arc_kernel.cu
+  )
+else()
+  add_library(Aventra STATIC
+    lib.cpp
+    menus.cpp
+    Aventra_arc.cpp
+    Aventra_rect.cpp
+    glad.c
+    errors.cpp
+    kernel/arc_alt.cpp
+  )
+endif()
+
+
 target_include_directories(Aventra PRIVATE
   include
   include/glad
@@ -65,9 +97,30 @@ target_include_directories(Aventra PRIVATE
   extern/imgui/backends
 )
 
-target_link_libraries(Aventra glfw OpenGL::GL imgui gtest_main)
+
+target_link_libraries(Aventra glfw OpenGL::GL imgui)
 
 
-enable_testing()
-include(GoogleTest)
-#gtest_discover_tests(Aventra)
+if (test)
+
+  add_executable(Aventra_test
+    tests/test_arc.cpp
+    errors.cpp
+  )
+
+  target_include_directories(Aventra_test PRIVATE
+    include
+    include/glad
+    extern/imgui
+    extern/imgui/backends
+  )
+
+
+
+  enable_testing()
+  include(GoogleTest)
+  gtest_discover_tests(Aventra_test)
+
+  target_link_libraries(Aventra_test Aventra gtest_main)
+  
+endif()
