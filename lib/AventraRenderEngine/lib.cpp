@@ -35,7 +35,7 @@ Window::Window(int x, int y, char *title) {
       // initialisation of class attributes:
       this->Wavelength = 0.0f;
       this->Frequency = 0.0f;
-      this->Slits = 1.0f;
+      this->Slits = 1;
       
       this->x = x;
       this->y = y;
@@ -77,7 +77,7 @@ Window::Window(int x, int y, char *title) {
 
 
 
-void Window::update() {
+void Window::beginRender() {
  
   glViewport(0, 0, this->x, this->y);
   glClearColor(this->bgR, this->bgG, this->bgB, 1);
@@ -92,77 +92,16 @@ void Window::update() {
   
 
   renderMainMenu();  
-  
-
-  // define a master wave.
-  Rect *prev = this->RectQueue.back();
-  // move the master wave
-  prev->Translate((this->Wavelength * this->Frequency), 0.0f);
-
-  // check bounds of master wave
-  if (prev->x > -0.03f) {prev->x = this->RectQueue.front()->x - this->Wavelength;}
-
-  // move the secondary waves behind a set distance
-  for (int index = this->RectQueue.size() - 2; index >= 0; index--) {
-    this->RectQueue[index]->SetPos((prev->x) - (index*(this->Wavelength)), this->RectQueue[index]->y);
-  }
 
   // Draw all wavefronts
   for (auto r : this->RectQueue) {
     r->Draw();
-  }
-
-  Arc *master = this->ArcQueue.back();
-  Arc *tail = this->ArcQueue.front();
-
+  }  
   
-  float flatness = (this->Wavelength < this->slitWidth) ? (this->Wavelength / this->slitWidth) : 1.0f;
-    
-  master->Scale((this->Wavelength * this->Frequency));
-  if (master->getR() > 3.0f) {master->setR(tail->getR() - this->Wavelength);}
+}
 
-  float home = master->getR();
-  for (int index = this->ArcQueue.size() - 2; index >=0; index--) {    
-    this->ArcQueue[index]->setR((home - (index  * this->Wavelength))); // change in radius change by some ratio
-  }
+void Window::swap() {
 
-
-  float offset = 0.0f;
-  float start = 1.0f;
-  for (int i = 1; i < this->Slits + 1; i++) {
-
-    // for an even number of slits
-    if (this->Slits % 2 == 0) {
-      if (i & 1) {
-        offset = -1 * offset - (1.5f / (this->Slits));
-      } else {
-        offset = -1 * offset;
-      }
-    } else {
-      
-      if (i & 1) {
-        offset = -1 * offset - (1.5f / (this->Slits + 1));
-
-        if (i == this->Slits) {
-          offset = 0.0f;
-        }
-      } else {
-        offset = -1 * offset;
-        
-      }   
-    }
-     
-    
-    for (auto a : this->ArcQueue) {
-      if (a->getR() >= 0.0f) {
-        a->SetColour(offset, 0.5, 0.0);
-        a->Draw(180, this->slitWidth, this->Wavelength, offset);
-      }  
-    }
-
-  }
-
-  
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   

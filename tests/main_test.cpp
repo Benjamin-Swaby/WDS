@@ -56,20 +56,4 @@ TEST(Main, ArcGeneration) {
   
 }
 
-TEST(Main, ArcGenerationShaderProgramAttached) {
-
-  auto win = new Aventra::Window(20,20, "Test Window");
-
-  auto r = new Aventra::Arc(0.0f, 0.0f, 0);
-  
-  unsigned int sP = r->getShaderProgram();
-
-  for (int i = 0; i < 1000; i++) {
-    r = new Aventra::Arc(0.0f, 0.0f, 0, sP);
-    win->ArcQueue.push_back(r);
-  }
-
-  EXPECT_EQ(win->ArcQueue.size(), 1000);
-  EXPECT_EQ(win->err, 0);
-}
 

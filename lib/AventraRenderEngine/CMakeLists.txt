@@ -2,20 +2,11 @@ cmake_minimum_required(VERSION 3.20)
 
 find_package(OpenGL REQUIRED)
 
+
 include(FetchContent)
 
 # enable with -Dcuda=ON
 option(test "Build all tests." OFF)
-option(cuda "Build With CUDA" OFF)
-
-
-if (cuda)
-  include(CheckLanguage)
-  check_language(CUDA)
-
-  enable_language(CUDA)
-
-endif()
 
 # Gtest
 FetchContent_Declare(
@@ -40,8 +31,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
 
 
 
@@ -62,34 +54,17 @@ target_include_directories(imgui PRIVATE
 target_link_libraries(imgui glfw OpenGL::GL)
 
 
+# Build Aventra Library  
 
-
-
-# Build Aventra Library
-
-if (cuda)
-  add_library(Aventra STATIC
-    lib.cpp
-    menus.cpp
-    Aventra_arc.cpp
-    Aventra_rect.cpp
-    glad.c
-    errors.cpp
-    kernel/arc_kernel.cu
-  )
-else()
-  add_library(Aventra STATIC
-    lib.cpp
-    menus.cpp
-    Aventra_arc.cpp
-    Aventra_rect.cpp
-    glad.c
-    errors.cpp
-    kernel/arc_alt.cpp
-  )
-endif()
-
-
+add_library(Aventra STATIC
+  lib.cpp
+  menus.cpp
+  Aventra_rect.cpp
+  glad.c
+  errors.cpp
+  Aventra_arc.cpp
+)
+  
 target_include_directories(Aventra PRIVATE
   include
   include/glad
@@ -104,6 +79,7 @@ target_link_libraries(Aventra glfw OpenGL::GL imgui)
 if (test)
 
   add_executable(Aventra_test
+    tests/test_rect.cpp
     tests/test_arc.cpp
     errors.cpp
   )

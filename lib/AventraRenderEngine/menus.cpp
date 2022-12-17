@@ -27,6 +27,7 @@ void Window::renderDebugMenu(bool &debug) {
     debug = false;
   }
 
+ 
   ImGui::End();
 }
 
@@ -44,7 +45,7 @@ void Window::renderMainMenu() {
   
   ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.0f, 0.5f); 
   ImGui::SliderFloat("Frequency", &this->Frequency, 0.0f, 0.5f);
-  ImGui::SliderInt("Slits", &this->Slits, 1, 40);
+  ImGui::SliderInt("Slits", &this->Slits, 1, 12);
 
   // calculate max slit width and reset bounds automatically
   float maxSlitWidth;
@@ -59,12 +60,6 @@ void Window::renderMainMenu() {
   
   ImGui::SliderFloat("Slit Width", &this->slitWidth, 0.0f, maxSlitWidth / this->y);
  
- 
-  if (ImGui::Button("Play/Pause")) {
-    this->play != this->play;
-  }
-
-  ImGui::SameLine();
   if (ImGui::Button("Change Background Colour")) {
     this->changeBGcolour = !this->changeBGcolour;
   }

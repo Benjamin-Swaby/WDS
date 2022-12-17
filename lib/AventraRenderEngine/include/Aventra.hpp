@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <vector>
+#include <string>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -12,6 +13,8 @@
 #include "Aventra_arc.hpp"
 
 using std::vector;
+using std::string;
+
 
 namespace Aventra {
   
@@ -22,7 +25,7 @@ namespace Aventra {
     bool debug = false;
     bool changeBGcolour = false;
     bool MainMenu = false;
-    double time = 0.0f;
+    vector<string> logVec;
     
   public:
     int err = 0;
@@ -30,19 +33,20 @@ namespace Aventra {
     float Wavelength;
     float Frequency;
     int Slits;
-    bool play;
     float slitWidth;
 
     vector<Rect*> RectQueue;
-    vector<Rect> SlitQueue;
+    vector<Rect*> SlitQueue;
     vector<Arc*> ArcQueue; 
     
     Window(int x, int y, char *title);
-    void update();
+    void beginRender();
+    void swap();
     int shouldClose();
     void renderDebugMenu(bool &debug);
     void renderColours(bool &show);
     void renderMainMenu();
+    void log(std::string msg) {this->logVec.push_back(msg);}
 
     ~Window() {
       glfwDestroyWindow(window);

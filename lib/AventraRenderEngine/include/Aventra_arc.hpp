@@ -6,15 +6,14 @@ namespace Aventra {
     
   private:
     
-    unsigned int VBO, VAO, EBO, VBO_Cuda;
-    unsigned int shaderProgram;
+    unsigned int  VBO, VAO, EBO;
     float r, cx, cy;
     float red, green, blue;
+    int *VBO_Cuda;
     
   public:
    
     Arc(float r, float cx, float cy);
-    Arc(float r, float cx, float cy, unsigned int shaderProgram);
     
     void Draw(int N, float slitWidth, float wavelength, float vertOffset);
     void Scale(float x);
@@ -23,8 +22,7 @@ namespace Aventra {
     void setR(float r) {this->r = r;}
     void SetColour(float r, float g, float b);
     void SetPos(float cx, float cy);
-    
-    unsigned int getShaderProgram(){return this->shaderProgram;}
+    void vertOffset(float deltaY) {this->cy += deltaY;}
     float getR(){return this->r;}
     float getCx(){return this->cx;}
     float getCy(){return this->cy;}

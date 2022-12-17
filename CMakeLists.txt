@@ -36,7 +36,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 
 add_subdirectory(lib/AventraRenderEngine)
-
+add_subdirectory(lib/WaveMath)
 
 add_executable(WDS
   src/main.cpp
@@ -45,8 +45,7 @@ add_executable(WDS
 target_include_directories(WDS
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        #${PROJECT_SOURCE_DIR}/extern/imgui
-	    #${PROJECT_SOURCE_DIR}/extern/imgui/backends
+        ${PROJECT_SOURCE_DIR}/lib/WaveMath/include
         ${PROJECT_SOURCE_DIR}/lib/AventraRenderEngine/include        
 )
 
@@ -60,8 +59,7 @@ if (test)
   target_include_directories(WDS_test
         PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        #${PROJECT_SOURCE_DIR}/extern/imgui
-	    #${PROJECT_SOURCE_DIR}/extern/imgui/backends
+        ${PROJECT_SOURCE_DIR}/lib/WaveMath/include
         ${PROJECT_SOURCE_DIR}/lib/AventraRenderEngine/include        
       )
   
@@ -69,8 +67,8 @@ if (test)
   include(GoogleTest)
   gtest_discover_tests(WDS_test)
 
-  target_link_libraries(WDS_test Aventra gtest_main)
+  target_link_libraries(WDS_test Aventra waveMath gtest_main)
   
 endif()
 
-target_link_libraries(WDS Aventra)
+target_link_libraries(WDS Aventra waveMath)

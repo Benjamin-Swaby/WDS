@@ -107,6 +107,44 @@ Rect::Rect(float x, float y, float width, float height) {
 }
 
 
+Rect::Rect(float x, float y, float width, float height, unsigned int sp) {
+  this->shaderProgram = sp;
+  this->x = x;
+  this->y = y;
+  this->width = width;
+  this->height = height;
+  
+  float vertices[] = {
+    x, y, 0.0f, // bl
+    x+width, y, 0.0f, //br
+    x+width, y + height, 0.0f, //tr
+    x, y+height, 0.0f // tl
+  };
+  
+  int indicies[] = {
+    0, 1, 3,
+    1, 2, 3
+  };
+
+
+  glGenVertexArrays(1, &this->VAO);
+  glGenBuffers(1, &this->VBO);
+  glGenBuffers(1, &this->EBO);
+
+  glBindVertexArray(this->VAO);
+  glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_DYNAMIC_DRAW);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(0);
+  
+}
+
+
+
 void Rect::Draw() {
   glUseProgram(this->shaderProgram);
   glBindVertexArray(this->VAO);
@@ -177,3 +215,4 @@ void Rect::SetPos(float Mx, float My) {
   glEnableVertexAttribArray(0);
   
 }
+

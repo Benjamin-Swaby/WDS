@@ -15,9 +15,11 @@ namespace Aventra {
     float x, y, width, height;
     
     Rect(float x, float y, float width, float height);
+    Rect(float x, float y, float width, float height, unsigned int sp);
     void Draw();
     void Translate(float Mx, float My);
     void SetPos(float Mx, float My);
+    unsigned int getShaderProgram() {return this->shaderProgram;}
     void Destroy();
     ~Rect(){
       this->Destroy();
