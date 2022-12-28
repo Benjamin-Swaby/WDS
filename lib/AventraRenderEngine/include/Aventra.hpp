@@ -11,6 +11,7 @@
 
 #include "Aventra_rect.hpp"
 #include "Aventra_arc.hpp"
+#include "Aventra_line.hpp"
 
 using std::vector;
 using std::string;
@@ -25,7 +26,7 @@ namespace Aventra {
     bool debug = false;
     bool changeBGcolour = false;
     bool MainMenu = false;
-    vector<string> logVec;
+    
     
   public:
     int err = 0;
@@ -34,9 +35,11 @@ namespace Aventra {
     float Frequency;
     int Slits;
     float slitWidth;
+    int numberOfMaxima;
+    bool showMaxima = false;
 
     vector<Rect*> RectQueue;
-    vector<Rect*> SlitQueue;
+    vector<Line*> MaximaQueue;
     vector<Arc*> ArcQueue; 
     
     Window(int x, int y, char *title);
@@ -46,7 +49,7 @@ namespace Aventra {
     void renderDebugMenu(bool &debug);
     void renderColours(bool &show);
     void renderMainMenu();
-    void log(std::string msg) {this->logVec.push_back(msg);}
+    
 
     ~Window() {
       glfwDestroyWindow(window);
@@ -55,7 +58,4 @@ namespace Aventra {
     
   };
 
-
-  
-  
 }

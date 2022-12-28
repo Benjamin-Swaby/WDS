@@ -24,7 +24,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 
 add_library(waveMath STATIC
- # src/waveCalculations.cpp
+  src/waveCalculations.cpp
   src/waveMovement.cpp
 )
 
@@ -36,7 +36,7 @@ if (test)
 
   add_executable(waveMathTest
      tests/test_movement.cpp
-    # tests/test_calculations.cpp
+     #tests/test_calculations.cpp
   )
 
   target_include_directories(waveMathTest PRIVATE

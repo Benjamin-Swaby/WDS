@@ -33,7 +33,7 @@ Window::Window(int x, int y, char *title) {
       
 
       // initialisation of class attributes:
-      this->Wavelength = 0.0f;
+      this->Wavelength = 0.003f; // make sure the wavelength is > 0!
       this->Frequency = 0.0f;
       this->Slits = 1;
       
@@ -60,6 +60,7 @@ Window::Window(int x, int y, char *title) {
       glfwMakeContextCurrent(this->window);
       glfwSwapInterval(1); // enable Vsync
 
+      //  using the Glad OpenGL loader to set some sane defaults for OpenGL
       if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       // ~~Chosen not to panic here as the program still may run.~~ //Unlikely! 
            WDS::Error("Failed to load GLAD configuration", 14, true);
@@ -96,7 +97,7 @@ void Window::beginRender() {
   // Draw all wavefronts
   for (auto r : this->RectQueue) {
     r->Draw();
-  }  
+  }
   
 }
 

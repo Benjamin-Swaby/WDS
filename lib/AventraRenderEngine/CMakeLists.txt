@@ -57,12 +57,13 @@ target_link_libraries(imgui glfw OpenGL::GL)
 # Build Aventra Library  
 
 add_library(Aventra STATIC
-  lib.cpp
-  menus.cpp
-  Aventra_rect.cpp
-  glad.c
-  errors.cpp
-  Aventra_arc.cpp
+  src/lib.cpp
+  src/menus.cpp
+  src/Aventra_line.cpp
+  src/Aventra_rect.cpp
+  src/glad.c
+  src/errors.cpp
+  src/Aventra_arc.cpp
 )
   
 target_include_directories(Aventra PRIVATE
@@ -81,7 +82,7 @@ if (test)
   add_executable(Aventra_test
     tests/test_rect.cpp
     tests/test_arc.cpp
-    errors.cpp
+    src/errors.cpp
   )
 
   target_include_directories(Aventra_test PRIVATE

@@ -43,10 +43,10 @@ void Window::renderColours(bool &show) {
 void Window::renderMainMenu() {
   ImGui::Begin("WDS");
   
-  ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.0f, 0.5f); 
+  ImGui::SliderFloat("Wavelength", &this->Wavelength, 0.03f, 0.75f); 
   ImGui::SliderFloat("Frequency", &this->Frequency, 0.0f, 0.5f);
   ImGui::SliderInt("Slits", &this->Slits, 1, 12);
-
+  
   // calculate max slit width and reset bounds automatically
   float maxSlitWidth;
   if (this->Slits > 0.0f){
@@ -59,7 +59,14 @@ void Window::renderMainMenu() {
   if (this->slitWidth >= maxSlitWidth) {this->slitWidth = maxSlitWidth;}
   
   ImGui::SliderFloat("Slit Width", &this->slitWidth, 0.0f, maxSlitWidth / this->y);
- 
+
+  ImGui::Text("Wave Speed: %.3f cm/s", (this->Wavelength * this->Frequency) * 100);
+  ImGui::Text("Number of Maxima: %d", this->numberOfMaxima);
+
+  if (ImGui::Button("Show Maxima")) {
+    this->showMaxima = !this->showMaxima;
+  }
+  
   if (ImGui::Button("Change Background Colour")) {
     this->changeBGcolour = !this->changeBGcolour;
   }
