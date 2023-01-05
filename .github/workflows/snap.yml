@@ -16,7 +16,7 @@ jobs:
       - name: setup dependancies
       - run: sudo apt install -y lxd snapcraft
       
-      -name: buld snap
+      - name: build snap
       - run: snapcraft
       
       -name: Upload files to Github release
