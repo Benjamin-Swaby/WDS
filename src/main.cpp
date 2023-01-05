@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-
+#include <string>
 
 #include "errors.hpp"
 
@@ -106,10 +106,15 @@ void drawMinimaMaxima(Window* w) {
   }
 }
 
-int main() {
+int main(int argc, char** argv) {
 
+  int res = 1000;
+  if (argc > 1) {
+    res = std::stoi(argv[1]);
+  }
+  
   // window creation
-  auto win = new Window(1400,1400, "WDS V0.1D");
+  auto win = new Window(res, res, "WDS V0.1D");
 
   // generate input waves as rectangles
   

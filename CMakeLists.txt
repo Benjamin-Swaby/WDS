@@ -8,12 +8,13 @@ option(test "Build all tests." OFF)
 
 IF (WIN32)
   set(GCC_COVERAGE_COMPILE_FLAGS "/MT")
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+  set(CMAKE_CXX_FLAGS  "/MT")
+  set(CMAKE_C_FLAGS "/MT")
 ELSE()
-  set(GCC_COVERAGE_COMPILE_FLAGS "-static-libstdc++ -static-libgcc  -O2")
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
-  set(CMAKE_C_FLAGS "-static-libgcc -O2")
+  set(CMAKE_CXX_FLAGS  "-O2 -Wall -Wpedantic")
+  set(CMAKE_C_FLAGS "-O2 -Wall -Wpedantic")
 ENDIF()
+
 
 
 project(Wave-Diffraction-Simulation
@@ -72,3 +73,6 @@ if (test)
 endif()
 
 target_link_libraries(WDS Aventra waveMath)
+
+install(TARGETS WDS
+  RUNTIME DESTINATION /usr/local/bin)

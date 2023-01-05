@@ -1,0 +1,38 @@
+name: wave-diffraction-simulation
+version: "1.0"
+summary: OpenGL Wave Diffraction Simulation
+description: |
+  WDS is an abstracted simulation of wave diffraction
+  that aims to be an educational utility to.
+
+base: core22
+confinement: classic
+
+parts:
+  wds-build:
+    plugin: cmake
+    source: ./
+    cmake-parameters:
+      - -Dtest=off
+    build-packages:
+      - gcc
+      - g++
+      - cmake
+      - xorg-dev
+      - libglu1-mesa-dev
+      - libwayland-dev
+      - libxkbcommon-dev
+      - wayland-protocols
+      - extra-cmake-modules
+    stage-packages:
+      - libglu1-mesa-dev
+      - xorg-dev
+      - libwayland-dev
+      - libxkbcommon-dev
+      - wayland-protocols
+      - extra-cmake-modules
+
+apps:
+  wds:
+    command: /usr/local/bin/WDS 720
+    
