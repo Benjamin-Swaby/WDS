@@ -1,0 +1,32 @@
+name: Snap
+
+on:
+  push:
+    tags:
+      - '*'
+  
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: setup dependancies
+      - run: sudo apt install -y lxd snapcraft
+      
+      -name: buld snap
+      - run: snapcraft
+      
+      -name: Upload files to Github release
+      uses:  svenstaro/upload-release-action@2.3.0
+      with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: wave-diffraction-simulation_1.0_amd64.snap
+          asset_name: wave-diffraction-simulation_1.0_amd64.snap
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Snap release"
+      
+    
