@@ -27,18 +27,16 @@ void calculateDiffraction(Window* w) {
   Arc *master = w->ArcQueue.back();
   Arc *tail = w->ArcQueue.front();
 
-  
   float flatness = (w->Wavelength < w->slitWidth) ? (w->Wavelength / w->slitWidth) : 1.0f;
-
+  
   // scale the master wave - if it's too far bring it 1 wavelength behind the last wave in the queue
-  master->Scale((w->Wavelength * w->Frequency));
-  if (master->getR() > 3.0f) {master->setR(tail->getR() - w->Wavelength);}
-
+  master->Scale((w->Wavelength / flatness) * w->Frequency);
+  if (master->getR() > (3.0f / flatness)) {master->setR(tail->getR() - (w->Wavelength / flatness));}
 
   // move the other waves a distance behind the master wave
   float home = master->getR();
   for (int index = w->ArcQueue.size() - 2; index >=0; index--) {    
-    w->ArcQueue[index]->setR((home - (index  * w->Wavelength)));
+    w->ArcQueue[index]->setR((home - (index  * (w->Wavelength / flatness))));
   }
 
   // calculate evenly spaced points along the grating
@@ -48,7 +46,8 @@ void calculateDiffraction(Window* w) {
   for (auto o : offsets) {
     for (auto a : w->ArcQueue) {
       if (a->getR() >= 0.0f) {
-        a->Draw((7200/w->Slits), w->slitWidth, w->Wavelength, o); // Number of points scales with the number of slits to increase performance
+        a->Draw((7200/w->Slits), w->slitWidth, w->Wavelength, o);
+        // Number of points scales with the number of slits to increase performance
       }  
     }
   }

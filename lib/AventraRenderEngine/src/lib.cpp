@@ -47,8 +47,9 @@ Window::Window(int x, int y, char *title) {
       }
 
       // generate window object
-      glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+      glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
       this->window = glfwCreateWindow(x,y, title, NULL, NULL);
+
 
       // Create a window
       if (!this->window) {
@@ -60,6 +61,13 @@ Window::Window(int x, int y, char *title) {
       glfwMakeContextCurrent(this->window);
       glfwSwapInterval(1); // enable Vsync
 
+      // set window size limits and lock aspect ration to 1:1
+      // min = 200x200 , max = NULL
+      glfwSetWindowSizeLimits(this->window, 200, 200,GLFW_DONT_CARE, GLFW_DONT_CARE);
+
+      // lock aspect Ratio
+      glfwSetWindowAspectRatio(this->window, 1, 1);
+      
       //  using the Glad OpenGL loader to set some sane defaults for OpenGL
       if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       // ~~Chosen not to panic here as the program still may run.~~ //Unlikely! 
@@ -79,7 +87,9 @@ Window::Window(int x, int y, char *title) {
 
 
 void Window::beginRender() {
- 
+
+  glfwGetWindowSize(this->window, &this->x, &this->y);
+  
   glViewport(0, 0, this->x, this->y);
   glClearColor(this->bgR, this->bgG, this->bgB, 1);
   glClear(GL_COLOR_BUFFER_BIT);
